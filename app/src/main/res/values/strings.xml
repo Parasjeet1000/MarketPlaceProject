@@ -1,0 +1,16 @@
+<resources>
+    <!-- Login Page -->
+    <string name="app_name">MarketPlaceProject</string>
+    <string name="email">Email Address</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="create_account">Create Account</string>
+    <string name="market_place">Market Place</string>
+    <string name="forgot_pass">Forgot Password?</string>
+
+    <!-- Account Creation -->
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="confirm_pass">Confirm Password</string>
+
+</resources>
