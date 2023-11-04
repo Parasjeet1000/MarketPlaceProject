@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Login">
 
     <TextView
         android:id="@+id/textview_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/market_place"
+        android:layout_marginTop="150dp"
+        android:text="BuyHub Login"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginTop="150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,17 +27,20 @@
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
     <EditText
         android:id="@+id/edittext_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/email"
         android:layout_margin="16dp"
-        android:padding="16dp"
         android:background="@color/light_gray"
-        app:layout_constraintTop_toBottomOf="@id/textview_title"
+        android:drawableLeft="@drawable/baseline_person_outline_24"
+        android:drawablePadding="10dp"
+        android:hint="@string/email"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/textview_title" />
     <FrameLayout
         android:id="@+id/frameLayout_pass"
         android:layout_width="match_parent"
@@ -56,6 +59,8 @@
             android:background="@color/light_gray"
             android:inputType="textPassword"
             android:layout_gravity="center"
+            android:drawableLeft="@drawable/baseline_password_24"
+            android:drawablePadding="10dp"
             app:layout_constraintTop_toBottomOf="@id/edittext_email"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -90,5 +95,17 @@
         app:layout_constraintTop_toBottomOf="@id/button_login"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_forgetPass"
+        app:layout_constraintVertical_bias="0.138" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
