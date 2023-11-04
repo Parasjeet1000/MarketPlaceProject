@@ -1,5 +1,6 @@
 package com.example.marketplaceproject;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -18,10 +19,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LAST_NAME = "LastName";
     public static final String COLUMN_EMAIL = "Email";
     public static final String COLUMN_PASS = "Password";
+    public static final String UID = "uid";
 
     public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
             COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_FIRST_NAME + " TEXT," + COLUMN_LAST_NAME +
-            " TEXT," + COLUMN_EMAIL + " TEXT," + COLUMN_PASS + " TEXT)";
+            " TEXT," + COLUMN_EMAIL + " TEXT," + UID + " TEXT," + COLUMN_PASS + " TEXT)";
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -64,5 +66,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] whereArgs = new String[]{email};
         return sdb.query(TABLE_NAME, new String[]{COLUMN_EMAIL, COLUMN_PASS}, whereClause, whereArgs, null, null, null);
     }
+
+    @SuppressLint("Range")
+    public String getUserFirstNameByUid(String uid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_FIRST_NAME};
+        String selection = UID + " = ?";
+        String[] selectionArgs = {uid};
+
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+
+        String firstName = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            firstName = cursor.getString(cursor.getColumnIndex(COLUMN_FIRST_NAME));
+            cursor.close();
+        }
+
+        return firstName;
+    }
+
 }
 

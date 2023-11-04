@@ -1,18 +1,29 @@
 package com.example.marketplaceproject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
@@ -22,11 +33,26 @@ public class AccountCreationActivity extends AppCompatActivity {
     private ImageView visible;
     private Button login;
     private DatabaseHelper db;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
+
+
 
     private boolean toggleVisible = false;
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser != null){
+            Intent intent = new Intent(AccountCreationActivity.this, Dashboard.class);
+            startActivity(intent);
+        }
+    }
 
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,14 +60,19 @@ public class AccountCreationActivity extends AppCompatActivity {
         db = new DatabaseHelper(this);
         db.getWritableDatabase();
 
+        auth = FirebaseAuth.getInstance();
+
+        user = auth.getCurrentUser();
+
         // Find views
         fName = findViewById(R.id.edittext_firstName);
         lName = findViewById(R.id.edittext_lastName);
         email = findViewById(R.id.edittext_email);
         pass = findViewById(R.id.edittext_password);
         confirm_pass = findViewById(R.id.edittext_confirmPass);
-        login = findViewById(R.id.button_login);
+        login = findViewById(R.id.button_create);
         visible = findViewById(R.id.imageView_visible);
+
 
         // Toggle Visibility
         visible.setOnClickListener(v -> {
@@ -60,21 +91,55 @@ public class AccountCreationActivity extends AppCompatActivity {
             }
         });
 
-        login.setOnClickListener(view -> {
-            validateInfo();
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String first_name = fName.getText().toString();
+                String last_name = lName.getText().toString();
+                String email_addr = email.getText().toString();
+                String password = pass.getText().toString();
+                String confirm_password = confirm_pass.getText().toString();
+
+                auth.createUserWithEmailAndPassword(email_addr, password)
+                        .addOnCompleteListener (new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(AccountCreationActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
+                                    user = auth.getCurrentUser();
+                                    String uid = user.getUid();
+                                    registerUser(uid);
+                                    Intent intent = new Intent(AccountCreationActivity.this, Login.class);
+                                    startActivity(intent);
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Toast.makeText(AccountCreationActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+
+                                }
+                            }
+                        });
+            }
         });
+
+
     }
 
-    public void validateInfo() {
+
+
+
+    public void registerUser(String uid) {
         String first_name = fName.getText().toString();
         String last_name = lName.getText().toString();
-        String email_addr = this.email.getText().toString();
+        String email_addr = email.getText().toString();
         String password = pass.getText().toString();
         String confirm_password = confirm_pass.getText().toString();
 
         if (first_name.isEmpty() || last_name.isEmpty() || email_addr.isEmpty() ||
                 password.isEmpty() || confirm_password.isEmpty()) {
             Toast.makeText(this, "Please fill out the highlighted fields.", Toast.LENGTH_SHORT).show();
+
 
             // Highlight empty fields
             if (first_name.isEmpty()) {
@@ -110,16 +175,27 @@ public class AccountCreationActivity extends AppCompatActivity {
             values.put(DatabaseHelper.COLUMN_LAST_NAME, last_name);
             values.put(DatabaseHelper.COLUMN_EMAIL, email_addr);
             values.put(DatabaseHelper.COLUMN_PASS, password);
+            values.put(DatabaseHelper.UID, uid);
 
             long rowID = db.insert(values);
 
             if (rowID == -1) {
                 Toast.makeText(this, "Error, try again", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Account Created", Toast.LENGTH_SHORT).show();
+
+
+
+
+
+
+
+
+
                 finish();
+
             }
         }
+
     }
 
 }
